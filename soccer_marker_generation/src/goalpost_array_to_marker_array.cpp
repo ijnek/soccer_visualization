@@ -64,9 +64,9 @@ private:
     marker.color.b = 1.0;
 
     if (post.observed_top) {
-      marker.mesh_resource = "package://naosoccer_visualization/meshes/goalpost_observed_top.dae";
+      marker.mesh_resource = "package://soccer_marker_generation/meshes/goalpost_observed_top.dae";
     } else {
-      marker.mesh_resource = "package://naosoccer_visualization/meshes/goalpost_observed_bot.dae";
+      marker.mesh_resource = "package://soccer_marker_generation/meshes/goalpost_observed_bot.dae";
     }
 
     return marker;
