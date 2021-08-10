@@ -8,15 +8,14 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(visualization_msgs REQUIRED)
-find_package(geometry_msgs REQUIRED)
 find_package(soccer_vision_msgs REQUIRED)
 
 # Build ball_to_marker
 add_executable(ball_to_marker src/ball_to_marker.cpp)
 ament_target_dependencies(ball_to_marker
   rclcpp
-  geometry_msgs
-  visualization_msgs)
+  visualization_msgs
+  soccer_vision_msgs)
 
 # Build goalpost_array_to_marker_array
 add_executable(goalpost_array_to_marker_array src/goalpost_array_to_marker_array.cpp)

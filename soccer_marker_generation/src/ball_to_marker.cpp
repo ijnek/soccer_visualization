@@ -14,7 +14,7 @@
 
 #include <memory>
 #include "rclcpp/rclcpp.hpp"
-#include "geometry_msgs/msg/point_stamped.hpp"
+#include "soccer_vision_msgs/msg/ball.hpp"
 #include "visualization_msgs/msg/marker.hpp"
 
 #define VISUALISATION_BALL_DIAMETER 0.1  // m
@@ -27,25 +27,25 @@ public:
   {
     publisher_ = this->create_publisher<visualization_msgs::msg::Marker>(
       "visualization/ball", 10);
-    subscriber_ = this->create_subscription<geometry_msgs::msg::PointStamped>(
+    subscriber_ = this->create_subscription<soccer_vision_msgs::msg::Ball>(
       "vision/ball", 1,
-      [this](geometry_msgs::msg::PointStamped::SharedPtr point) {
-        publisher_->publish(convert(*point));
+      [this](soccer_vision_msgs::msg::Ball::SharedPtr ball) {
+        publisher_->publish(convert(*ball));
       });
   }
 
 private:
-  visualization_msgs::msg::Marker convert(geometry_msgs::msg::PointStamped & point)
+  visualization_msgs::msg::Marker convert(soccer_vision_msgs::msg::Ball & ball)
   {
     visualization_msgs::msg::Marker marker;
-    marker.header.frame_id = point.header.frame_id;
+    marker.header.frame_id = ball.header.frame_id;
     marker.ns = "";
     marker.id = 0;
     marker.type = visualization_msgs::msg::Marker::SPHERE;
     marker.action = visualization_msgs::msg::Marker::ADD;
-    marker.pose.position.x = point.point.x;
-    marker.pose.position.y = point.point.y;
-    marker.pose.position.z = point.point.z;
+    marker.pose.position.x = ball.center.x;
+    marker.pose.position.y = ball.center.y;
+    marker.pose.position.z = ball.center.z;
     marker.pose.orientation.x = 0.0;
     marker.pose.orientation.y = 0.0;
     marker.pose.orientation.z = 0.0;
@@ -61,7 +61,7 @@ private:
   }
 
   rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr publisher_;
-  rclcpp::Subscription<geometry_msgs::msg::PointStamped>::SharedPtr subscriber_;
+  rclcpp::Subscription<soccer_vision_msgs::msg::Ball>::SharedPtr subscriber_;
 };
 
 int
