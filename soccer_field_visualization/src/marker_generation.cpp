@@ -59,6 +59,14 @@ visualization_msgs::msg::MarkerArray createMarkerArray(soccer_field_msgs::msg::F
     markerArray.markers.push_back(marker);
   }
 
+  // Convert left cross bar
+  if (!field.left_goal.crossbar.empty())
+  {
+    auto marker = createMarker(field.left_goal.crossbar.at(0));
+    marker.id = id++;
+    markerArray.markers.push_back(marker);
+  }
+
   return markerArray;
 }
 
@@ -130,8 +138,7 @@ visualization_msgs::msg::Marker createMarker(soccer_field_msgs::msg::GoalPost go
   marker.ns = "";
   marker.action = visualization_msgs::msg::Marker::ADD;
 
-  if (goalPost.type == goalPost.TYPE_CYLINDER)
-  {
+  if (goalPost.type == goalPost.TYPE_CYLINDER) {
     marker.type = visualization_msgs::msg::Marker::CYLINDER;
     marker.scale.x = goalPost.width;
     marker.scale.y = goalPost.width;
@@ -146,6 +153,33 @@ visualization_msgs::msg::Marker createMarker(soccer_field_msgs::msg::GoalPost go
   marker.pose.orientation.y = 0.0;
   marker.pose.orientation.z = 0.0;
   marker.pose.orientation.w = 1.0;
+  marker.color.a = 1.0;
+  marker.color.r = 1.0;
+  marker.color.g = 1.0;
+  marker.color.b = 1.0;
+  return marker;
+}
+
+visualization_msgs::msg::Marker createMarker(soccer_field_msgs::msg::Crossbar crossbar)
+{
+  visualization_msgs::msg::Marker marker;
+  marker.header.frame_id = "map";
+  marker.ns = "";
+  marker.action = visualization_msgs::msg::Marker::ADD;
+
+  if (crossbar.type == crossbar.TYPE_CYLINDER) {
+    marker.type = visualization_msgs::msg::Marker::CYLINDER;
+    marker.scale.x = crossbar.height;
+    marker.scale.y = crossbar.height;
+  }
+
+  marker.scale.z = crossbar.width;
+
+  marker.pose.position = crossbar.center;
+  marker.pose.orientation.x = 0.7071;
+  marker.pose.orientation.y = 0.0;
+  marker.pose.orientation.z = 0.0;
+  marker.pose.orientation.w = 0.7071;
   marker.color.a = 1.0;
   marker.color.r = 1.0;
   marker.color.g = 1.0;

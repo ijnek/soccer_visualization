@@ -28,6 +28,7 @@ visualization_msgs::msg::MarkerArray createMarkerArray(soccer_field_msgs::msg::F
 visualization_msgs::msg::Marker createMarker(soccer_field_msgs::msg::Surface surface);
 visualization_msgs::msg::Marker createMarker(soccer_field_msgs::msg::LineMarking lineMarking);
 visualization_msgs::msg::Marker createMarker(soccer_field_msgs::msg::GoalPost goalPost);
+visualization_msgs::msg::Marker createMarker(soccer_field_msgs::msg::Crossbar crossbar);
 visualization_msgs::msg::Marker createDeleteAllActionMarker();
 
 }  // marker_generation
