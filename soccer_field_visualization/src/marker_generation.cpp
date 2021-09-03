@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <tuple>
+#include <cmath>
 #include <iostream>
 
 #include "soccer_field_visualization/marker_generation.hpp"
@@ -31,9 +33,9 @@ visualization_msgs::msg::MarkerArray createMarkerArray(soccer_field_msgs::msg::F
   // Delete all markers, we have a new field.
   markerArray.markers.push_back(createDeleteAllActionMarker());
 
-  // Convert surface
+  // Convert field of play
   {
-    auto marker = createMarker(field.surface);
+    auto marker = createMarkerFieldOfPlay(field.field_of_play);
     marker.id = id++;
     markerArray.markers.push_back(marker);
   }
@@ -45,41 +47,25 @@ visualization_msgs::msg::MarkerArray createMarkerArray(soccer_field_msgs::msg::F
     markerArray.markers.push_back(marker);
   }
 
-  // Convert left top goalpost
-  {
-    auto marker = createMarker(field.left_goal.top_post);
+    for (auto arcMarking : field.markings.arcs) {
+    auto marker = createMarker(arcMarking);
     marker.id = id++;
     markerArray.markers.push_back(marker);
   }
 
-  // Convert left bottom goalpost
-  {
-    auto marker = createMarker(field.left_goal.bottom_post);
-    marker.id = id++;
-    markerArray.markers.push_back(marker);
-  }
-
-  // Convert left cross bar
-  if (!field.left_goal.crossbar.empty())
-  {
-    auto marker = createMarker(field.left_goal.crossbar.at(0));
-    marker.id = id++;
-    markerArray.markers.push_back(marker);
-  }
 
   return markerArray;
 }
 
-visualization_msgs::msg::Marker createMarker(soccer_field_msgs::msg::Surface surface)
+visualization_msgs::msg::Marker createMarkerFieldOfPlay(geometry_msgs::msg::Polygon fop)
 {
-
   visualization_msgs::msg::Marker marker;
   marker.header.frame_id = "map";
   marker.ns = "";
   marker.type = visualization_msgs::msg::Marker::LINE_STRIP;
   marker.action = visualization_msgs::msg::Marker::ADD;
 
-  for (auto surfacePoint : surface.edge.points) {
+  for (auto surfacePoint : fop.points) {
     geometry_msgs::msg::Point point;
     point.x = surfacePoint.x;
     point.y = surfacePoint.y;
@@ -88,11 +74,11 @@ visualization_msgs::msg::Marker createMarker(soccer_field_msgs::msg::Surface sur
   }
 
   // Add first point again, so line strip encloses the polygon.
-  if (surface.edge.points.size() > 0) {
+  if (fop.points.size() > 0) {
     geometry_msgs::msg::Point point;
-    point.x = surface.edge.points.at(0).x;
-    point.y = surface.edge.points.at(0).y;
-    point.z = surface.edge.points.at(0).z;
+    point.x = fop.points.at(0).x;
+    point.y = fop.points.at(0).y;
+    point.z = fop.points.at(0).z;
     marker.points.push_back(point);
   }
 
@@ -131,55 +117,32 @@ visualization_msgs::msg::Marker createMarker(soccer_field_msgs::msg::LineMarking
   return marker;
 }
 
-visualization_msgs::msg::Marker createMarker(soccer_field_msgs::msg::GoalPost goalPost)
+visualization_msgs::msg::Marker createMarker(soccer_field_msgs::msg::ArcMarking arcMarking)
 {
   visualization_msgs::msg::Marker marker;
   marker.header.frame_id = "map";
   marker.ns = "";
+  marker.type = visualization_msgs::msg::Marker::LINE_STRIP;
   marker.action = visualization_msgs::msg::Marker::ADD;
 
-  if (goalPost.type == goalPost.TYPE_CYLINDER) {
-    marker.type = visualization_msgs::msg::Marker::CYLINDER;
-    marker.scale.x = goalPost.width;
-    marker.scale.y = goalPost.width;
+  const static float maxAngleBetweenPoints = 0.2;
+  int numPoints = (arcMarking.heading_end - arcMarking.heading_start) / maxAngleBetweenPoints + 1;
+  float anglePerPoint = (arcMarking.heading_end - arcMarking.heading_start) / numPoints;
+
+  for (auto [i, angle] = std::tuple{0, 0.0}; i < numPoints + 1; i++, angle+=anglePerPoint)
+  {
+    geometry_msgs::msg::Point point;
+    point.x = arcMarking.center.x + arcMarking.radius * cos(angle);
+    point.y = arcMarking.center.y + arcMarking.radius * sin(angle);
+    point.z = arcMarking.center.z;
+    marker.points.push_back(point);
   }
 
-  marker.scale.z = goalPost.height;
-
-  marker.pose.position.x = goalPost.base.x;
-  marker.pose.position.y = goalPost.base.y;
-  marker.pose.position.z = goalPost.base.z + goalPost.height / 2;
   marker.pose.orientation.x = 0.0;
   marker.pose.orientation.y = 0.0;
   marker.pose.orientation.z = 0.0;
   marker.pose.orientation.w = 1.0;
-  marker.color.a = 1.0;
-  marker.color.r = 1.0;
-  marker.color.g = 1.0;
-  marker.color.b = 1.0;
-  return marker;
-}
-
-visualization_msgs::msg::Marker createMarker(soccer_field_msgs::msg::Crossbar crossbar)
-{
-  visualization_msgs::msg::Marker marker;
-  marker.header.frame_id = "map";
-  marker.ns = "";
-  marker.action = visualization_msgs::msg::Marker::ADD;
-
-  if (crossbar.type == crossbar.TYPE_CYLINDER) {
-    marker.type = visualization_msgs::msg::Marker::CYLINDER;
-    marker.scale.x = crossbar.height;
-    marker.scale.y = crossbar.height;
-  }
-
-  marker.scale.z = crossbar.width;
-
-  marker.pose.position = crossbar.center;
-  marker.pose.orientation.x = 0.7071;
-  marker.pose.orientation.y = 0.0;
-  marker.pose.orientation.z = 0.0;
-  marker.pose.orientation.w = 0.7071;
+  marker.scale.x = arcMarking.line_width;
   marker.color.a = 1.0;
   marker.color.r = 1.0;
   marker.color.g = 1.0;
