@@ -47,8 +47,14 @@ visualization_msgs::msg::MarkerArray createMarkerArray(soccer_field_msgs::msg::F
     markerArray.markers.push_back(marker);
   }
 
-    for (auto arcMarking : field.markings.arcs) {
+  for (auto arcMarking : field.markings.arcs) {
     auto marker = createMarker(arcMarking);
+    marker.id = id++;
+    markerArray.markers.push_back(marker);
+  }
+  
+  for (auto spotMarking : field.markings.spots) {
+    auto marker = createMarker(spotMarking);
     marker.id = id++;
     markerArray.markers.push_back(marker);
   }
@@ -129,7 +135,8 @@ visualization_msgs::msg::Marker createMarker(soccer_field_msgs::msg::ArcMarking 
   int numPoints = (arcMarking.heading_end - arcMarking.heading_start) / maxAngleBetweenPoints + 1;
   float anglePerPoint = (arcMarking.heading_end - arcMarking.heading_start) / numPoints;
 
-  for (auto [i, angle] = std::tuple{0, 0.0}; i < numPoints + 1; i++, angle+=anglePerPoint)
+  for (auto [i, angle] = std::tuple{0, arcMarking.heading_start}; i < numPoints + 1;
+    i++, angle += anglePerPoint)
   {
     geometry_msgs::msg::Point point;
     point.x = arcMarking.center.x + arcMarking.radius * cos(angle);
@@ -143,6 +150,28 @@ visualization_msgs::msg::Marker createMarker(soccer_field_msgs::msg::ArcMarking 
   marker.pose.orientation.z = 0.0;
   marker.pose.orientation.w = 1.0;
   marker.scale.x = arcMarking.line_width;
+  marker.color.a = 1.0;
+  marker.color.r = 1.0;
+  marker.color.g = 1.0;
+  marker.color.b = 1.0;
+  return marker;
+}
+
+visualization_msgs::msg::Marker createMarker(soccer_field_msgs::msg::SpotMarking spotMarking)
+{
+  visualization_msgs::msg::Marker marker;
+  marker.header.frame_id = "map";
+  marker.ns = "";
+  marker.type = visualization_msgs::msg::Marker::CYLINDER;
+  marker.action = visualization_msgs::msg::Marker::ADD;
+  marker.pose.position = spotMarking.center;
+  marker.pose.orientation.x = 0.0;
+  marker.pose.orientation.y = 0.0;
+  marker.pose.orientation.z = 0.0;
+  marker.pose.orientation.w = 1.0;
+  marker.scale.x = spotMarking.radius * 2;
+  marker.scale.y = spotMarking.radius * 2;
+  marker.scale.z = 0.0001;
   marker.color.a = 1.0;
   marker.color.r = 1.0;
   marker.color.g = 1.0;
