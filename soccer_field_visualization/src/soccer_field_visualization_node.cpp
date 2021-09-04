@@ -30,10 +30,12 @@ public:
       "visualization/field", rclcpp::QoS(1).transient_local());
 
     subscription_ = this->create_subscription<soccer_field_msgs::msg::Field>(
-      "field", 1,
+      "field", rclcpp::QoS(1).transient_local(),
       [this](soccer_field_msgs::msg::Field::SharedPtr field) {
+        RCLCPP_DEBUG(get_logger(), "Received Field msg");
         auto markerArray = marker_generation::createMarkerArray(*field);
         publisher_->publish(markerArray);
+        RCLCPP_DEBUG(get_logger(), "Published Marker Array");
       });
   }
 
