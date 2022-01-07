@@ -14,7 +14,7 @@
 
 #include <memory>
 #include "rclcpp/rclcpp.hpp"
-#include "soccer_vision_msgs/msg/ball.hpp"
+#include "soccer_object_msgs/msg/ball.hpp"
 #include "visualization_msgs/msg/marker.hpp"
 
 #define VISUALISATION_BALL_DIAMETER 0.1  // m
@@ -27,15 +27,15 @@ public:
   {
     publisher_ = this->create_publisher<visualization_msgs::msg::Marker>(
       "visualization/ball", 10);
-    subscriber_ = this->create_subscription<soccer_vision_msgs::msg::Ball>(
+    subscriber_ = this->create_subscription<soccer_object_msgs::msg::Ball>(
       "vision/ball", 1,
-      [this](soccer_vision_msgs::msg::Ball::SharedPtr ball) {
+      [this](soccer_object_msgs::msg::Ball::SharedPtr ball) {
         publisher_->publish(convert(*ball));
       });
   }
 
 private:
-  visualization_msgs::msg::Marker convert(soccer_vision_msgs::msg::Ball & ball)
+  visualization_msgs::msg::Marker convert(soccer_object_msgs::msg::Ball & ball)
   {
     visualization_msgs::msg::Marker marker;
     marker.header.frame_id = ball.header.frame_id;
@@ -61,7 +61,7 @@ private:
   }
 
   rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr publisher_;
-  rclcpp::Subscription<soccer_vision_msgs::msg::Ball>::SharedPtr subscriber_;
+  rclcpp::Subscription<soccer_object_msgs::msg::Ball>::SharedPtr subscriber_;
 };
 
 int

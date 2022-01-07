@@ -14,7 +14,7 @@
 
 #include <memory>
 #include "rclcpp/rclcpp.hpp"
-#include "soccer_vision_msgs/msg/robot_array.hpp"
+#include "soccer_object_msgs/msg/robot_array.hpp"
 #include "visualization_msgs/msg/marker_array.hpp"
 
 class RobotArrayToMarkerArray : public rclcpp::Node
@@ -25,9 +25,9 @@ public:
   {
     publisher_ = this->create_publisher<visualization_msgs::msg::MarkerArray>(
       "visualization/robots", 10);
-    subscriber_ = this->create_subscription<soccer_vision_msgs::msg::RobotArray>(
+    subscriber_ = this->create_subscription<soccer_object_msgs::msg::RobotArray>(
       "vision/robots", 1,
-      [this](soccer_vision_msgs::msg::RobotArray::SharedPtr robotArray) {
+      [this](soccer_object_msgs::msg::RobotArray::SharedPtr robotArray) {
         visualization_msgs::msg::MarkerArray markerArray;
         markerArray.markers.push_back(createDeleteAllActionMarker());
         for (unsigned i = 0; i < robotArray->robots.size(); ++i) {
@@ -38,7 +38,7 @@ public:
   }
 
 private:
-  visualization_msgs::msg::Marker convert(int markerId, soccer_vision_msgs::msg::Robot & robot)
+  visualization_msgs::msg::Marker convert(int markerId, soccer_object_msgs::msg::Robot & robot)
   {
     visualization_msgs::msg::Marker marker;
     marker.header.frame_id = robot.header.frame_id;
@@ -74,7 +74,7 @@ private:
   }
 
   rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr publisher_;
-  rclcpp::Subscription<soccer_vision_msgs::msg::RobotArray>::SharedPtr subscriber_;
+  rclcpp::Subscription<soccer_object_msgs::msg::RobotArray>::SharedPtr subscriber_;
 };
 
 int
