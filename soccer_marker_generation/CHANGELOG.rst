@@ -2,8 +2,8 @@
 Changelog for package soccer_marker_generation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.2 (2022-01-08)
+------------------
 * rename soccer_interfaces/soccer_vision_msgs to soccer_object_msgs
 * Use new Ball msg, rather than Point msg
 * add ament_cmake_gtest to package.xml
