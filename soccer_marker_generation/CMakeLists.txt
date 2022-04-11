@@ -9,6 +9,8 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(visualization_msgs REQUIRED)
 find_package(soccer_object_msgs REQUIRED)
+find_package(rclcpp_components REQUIRED)
+find_package(soccer_vision_3d_msgs REQUIRED)
 
 # Build ball_to_marker
 add_executable(ball_to_marker src/ball_to_marker.cpp)
@@ -44,6 +46,18 @@ ament_target_dependencies(flag_array_to_marker_array
   rclcpp
   visualization_msgs
   soccer_object_msgs)
+
+# Build ball_array_to_marker_array
+add_library(ball_array_to_marker_array_node src/ball_array_to_marker_array.cpp)
+ament_target_dependencies(ball_array_to_marker_array_node
+  rclcpp
+  visualization_msgs
+  soccer_vision_3d_msgs
+  rclcpp_components)
+rclcpp_components_register_node(ball_array_to_marker_array_node
+  PLUGIN "BallArray"
+  EXECUTABLE ball_array_to_marker_array)
+ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 
 # Install
 install(TARGETS
