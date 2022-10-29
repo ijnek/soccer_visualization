@@ -2,8 +2,8 @@
 Changelog for package soccer_marker_generation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.0 (2022-10-29)
+------------------
 * Deprecate package in favor of ros-sports/soccer_vision_3d_rviz_markers (`#3 <https://github.com/ijnek/soccer_visualization/issues/3>`_)
 * Contributors: Kenji Brameld
 
