@@ -2,6 +2,11 @@
 Changelog for package soccer_marker_generation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Deprecate package in favor of ros-sports/soccer_vision_3d_rviz_markers (`#3 <https://github.com/ijnek/soccer_visualization/issues/3>`_)
+* Contributors: Kenji Brameld
+
 0.0.2 (2022-01-08)
 ------------------
 * rename soccer_interfaces/soccer_vision_msgs to soccer_object_msgs
