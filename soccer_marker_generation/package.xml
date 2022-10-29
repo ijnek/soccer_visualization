@@ -19,5 +19,9 @@
 
   <export>
     <build_type>ament_cmake</build_type>
+    <deprecated>
+      This package will be removed in ROS J-Turtle due to the deprecation of soccer_object_msgs package.
+      Instead, use packages from ros-sports/soccer_vision_3d_rviz_markers, which provides similar features with a different API.
+    </deprecated>
   </export>
 </package>
